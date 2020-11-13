@@ -17,7 +17,7 @@ resume:
 
 loggers:
     wandb:
-        project: "random_tests"
+        project: "skyhacks2020"
         team: "kino"
         group: None
         job_type: "train"
