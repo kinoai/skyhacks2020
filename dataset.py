@@ -43,5 +43,8 @@ class SkyDataset(Dataset):
 
         return image, label
 
+    def __len__(self):
+        return len(self.dataset_description)
+
 
 
