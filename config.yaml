@@ -1,4 +1,4 @@
-num_of_gpus: -1
+num_of_gpus: 0
 
 hparams:
     max_epochs: 30
@@ -17,7 +17,7 @@ resume:
 
 loggers:
     wandb:
-        project: "hackathon_template_test"
+        project: "skyhacks2020"
         team: "kino"
         group: None
         job_type: "train"
