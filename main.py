@@ -11,7 +11,7 @@ from pytorch_lightning.loggers import WandbLogger
 
 # custom utils
 from utils.lightning_wrapper import LitModel
-from utils.data_modules import MNISTDataModule
+from utils.data_modules import *
 from utils.callbacks import ExampleCallback, SaveOnnxToWandbCallback
 
 
@@ -41,15 +41,17 @@ def init_wandb(config, model, dataloader):
 
 
 def main(config):
-    # Init our model
-    model = LitModel(config)
 
     # Init data module
-    datamodule = MNISTDataModule(batch_size=config["hparams"]["batch_size"])
+    datamodule = Cifar10DataModule(config=config, batch_size=config["hparams"]["batch_size"])
     datamodule.prepare_data()
     datamodule.setup()
 
+    # Init our model
+    model = LitModel(config)
+
     # Init wandb logger
+    # wandb_logger = []
     wandb_logger = init_wandb(config, model, datamodule)
 
     # Init callbacks

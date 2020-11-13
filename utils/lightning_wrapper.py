@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy, precision, recall, f1_score, fbeta_score
 
 # custom models
-from utils.models import ModelMNISTv1, ModelMNISTv2
+from utils.models import *
 
 
 class LitModel(pl.LightningModule):
@@ -16,7 +16,9 @@ class LitModel(pl.LightningModule):
         super().__init__()
 
         self.save_hyperparameters(config["hparams"])
-        self.model = ModelMNISTv2(config=self.hparams)
+        # self.model = MNISTExampleModel(config=self.hparams)
+        # self.model = ResNetTrasferLearning(config=self.hparams)
+        self.model = EfficientNetTransferLearning(config=self.hparams)
 
     def forward(self, x):
         return self.model(x)
