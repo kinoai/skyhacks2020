@@ -25,15 +25,11 @@ def init_wandb(config, model, dataloader):
         log_model=True,
         offline=False
     )
-    wandb_logger.watch(model.model, log='all')
+    # wandb_logger.watch(model.model) # dont do this for large models xDDD
     wandb_logger.log_hyperparams({
         "model_name": model.model.__class__.__name__,
         "dataset_name": dataloader.__class__.__name__,
         "optimizer": model.configure_optimizers().__class__.__name__,
-        "train_size": len(dataloader.data_train),
-        "val_size": len(dataloader.data_val),
-        "test_size": len(dataloader.data_test),
-        "input_dims": dataloader.dims,
     })
     # download model from a specific wandb run
     # wandb.restore('model-best.h5', run_path="kino/some_project/a1b2c3d")
@@ -43,7 +39,7 @@ def init_wandb(config, model, dataloader):
 def main(config):
 
     # Init data module
-    datamodule = Cifar10DataModule(config=config, batch_size=config["hparams"]["batch_size"])
+    datamodule = Cifar10DataModule(config=config)
     datamodule.prepare_data()
     datamodule.setup()
 
@@ -96,9 +92,6 @@ def main(config):
 
     # Train the model ⚡
     trainer.fit(model=model, datamodule=datamodule)
-
-    # Evaluate model on test set
-    trainer.test()
 
 
 def load_config():

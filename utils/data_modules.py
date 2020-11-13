@@ -49,11 +49,11 @@ class MNISTDataModule(pl.LightningDataModule):
 
 class Cifar10DataModule(pl.LightningDataModule):
 
-    def __init__(self, config, data_dir='data/cifar10', batch_size=256):
+    def __init__(self, config, data_dir='data/cifar10'):
         super().__init__()
         self.config = config
         self.data_dir = data_dir
-        self.batch_size = batch_size
+        self.batch_size = self.config["hparams"]["batch_size"]
         self.transform = transforms.ToTensor()
 
         self.data_train = None

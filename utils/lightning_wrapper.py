@@ -51,19 +51,5 @@ class LitModel(pl.LightningModule):
 
         return loss
 
-    # logic for a single testing step
-    def test_step(self, batch, batch_idx):
-        x, y = batch
-        logits = self.model(x)
-        loss = F.nll_loss(logits, y)
-
-        # test metrics
-        preds = torch.argmax(logits, dim=1)
-        acc = accuracy(preds, y)
-        self.log('test_loss', loss, prog_bar=True, logger=True)
-        self.log('test_acc', acc, prog_bar=True, logger=True)
-
-        return loss
-
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.hparams.lr)

@@ -32,18 +32,18 @@ class EfficientNetTransferLearning(nn.Module):
         self.model = EfficientNet.from_pretrained('efficientnet-b1')
 
         for param in self.model.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
 
         num_ftrs = self.model._fc.in_features
-        self.model._fc.requires_grad = True
+        self.model._fc = nn.Linear(num_ftrs, 10)
         print(num_ftrs)
 
-        self.model._fc = nn.Linear(num_ftrs, 128)
-        self.lin_1 = nn.Linear(128, 10)
+        # self.model._fc = nn.Linear(num_ftrs, 128)
+        # self.lin_1 = nn.Linear(128, 10)
 
     def forward(self, x):
         x = self.model(x)
-        x = self.lin_1(x)
+        # x = self.lin_1(x)
         return F.log_softmax(x, dim=1)
 
 

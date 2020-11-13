@@ -1,7 +1,7 @@
 num_of_gpus: 0
 
 hparams:
-    max_epochs: 30
+    max_epochs: 50
     batch_size: 64
     lr: 0.001
     accumulate_grad_batches: 1
@@ -17,7 +17,7 @@ resume:
 
 loggers:
     wandb:
-        project: "skyhacks2020"
+        project: "random_tests"
         team: "kino"
         group: None
         job_type: "train"
@@ -27,7 +27,7 @@ callbacks:
     checkpoint:
         monitor: "val_acc"
         save_top_k: 1
-        save_last: True
+        save_last: False
         mode: "max"
     early_stop:
         monitor: "val_acc"
@@ -36,5 +36,5 @@ callbacks:
 
 printing:
     progress_bar_refresh_rate: 20
-    weights_summary: "full"
-    profiler: True
+    weights_summary: "top"
+    profiler: False
