@@ -1,4 +1,5 @@
 from torch.utils.data import Dataset
+import torch
 from PIL import Image
 
 import csv
@@ -18,7 +19,7 @@ class SkyDatasetDescription:
 
             for row in reader:
                 file_name = row[0]
-                categories = row[1:]
+                categories = list(map(lambda x: 1 if x == 'True' else 0, row[1:]))
 
                 sample = {'name': file_name, 'label': categories}
                 description.append(sample)
@@ -41,7 +42,7 @@ class SkyDataset(Dataset):
         if self.trasforms:
             image = self.trasforms(image)
 
-        return image, label
+        return image, torch.FloatTensor(label)
 
     def __len__(self):
         return len(self.dataset_description)
