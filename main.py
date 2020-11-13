@@ -22,7 +22,7 @@ def init_wandb(config, model, dataloader):
         tags=config["loggers"]["wandb"]["tags"],
         entity=config["loggers"]["wandb"]["team"],
         id=config["resume"]["wandb_run_id"] if config["resume"]["resume_from_ckpt"] else None,
-        log_model=True,
+        log_model=config["loggers"]["wandb"]["log_model"],
         offline=False
     )
     # wandb_logger.watch(model.model) # dont do this for large models xDDD
