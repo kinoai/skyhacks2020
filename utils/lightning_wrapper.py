@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy, precision, recall, f1_score, fbeta_score
 
 # custom models
-from utils.models import ModelMNISTv1, ModelMNISTv2
+from utils.models import *
 
 
 class LitModel(pl.LightningModule):
@@ -16,7 +16,9 @@ class LitModel(pl.LightningModule):
         super().__init__()
 
         self.save_hyperparameters(config["hparams"])
-        self.model = ModelMNISTv2(config=self.hparams)
+        # self.model = MNISTExampleModel(config=self.hparams)
+        # self.model = ResNetTrasferLearning(config=self.hparams)
+        self.model = EfficientNetTransferLearning(config=self.hparams)
 
     def forward(self, x):
         return self.model(x)
@@ -46,20 +48,6 @@ class LitModel(pl.LightningModule):
         acc = accuracy(preds, y)
         self.log('val_loss', loss, prog_bar=True, logger=True)
         self.log('val_acc', acc, prog_bar=True, logger=True)
-
-        return loss
-
-    # logic for a single testing step
-    def test_step(self, batch, batch_idx):
-        x, y = batch
-        logits = self.model(x)
-        loss = F.nll_loss(logits, y)
-
-        # test metrics
-        preds = torch.argmax(logits, dim=1)
-        acc = accuracy(preds, y)
-        self.log('test_loss', loss, prog_bar=True, logger=True)
-        self.log('test_acc', acc, prog_bar=True, logger=True)
 
         return loss
 
