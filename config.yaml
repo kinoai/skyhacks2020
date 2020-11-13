@@ -22,6 +22,7 @@ loggers:
         group: None
         job_type: "train"
         tags: []
+        log_model: False
 
 callbacks:
     checkpoint:
