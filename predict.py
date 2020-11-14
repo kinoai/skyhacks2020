@@ -1,12 +1,10 @@
 import torch
-from pytorch_lightning import LightningModule
-from torch.utils.data import DataLoader
-
 from utils.lightning_wrapper import LitModel
 from utils.datasets import SkyTestDataset
-from utils.transform import preprocess
+from utils.transform import test_preprocess
 from main import load_config
 import csv
+
 
 # field names
 fields = [
@@ -21,7 +19,7 @@ config = load_config()
 pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/3kw3tr2z/checkpoints/epoch=0.ckpt", config=config)
 pretrained_model.freeze()
 
-test_dataset = SkyTestDataset(root_dir="data/skyhacks_hackathon_dataset/live_test_images", transforms=preprocess)
+test_dataset = SkyTestDataset(root_dir="data/skyhacks_hackathon_dataset/live_test_images", transforms=test_preprocess)
 
 # data rows of csv file
 answers = []

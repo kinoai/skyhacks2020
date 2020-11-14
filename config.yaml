@@ -31,7 +31,7 @@ callbacks:
         save_last: False
         mode: "max"
     early_stop:
-        monitor: "val_acc"
+        monitor: "val_f1_v2"
         patience: 100
         mode: "max"
 

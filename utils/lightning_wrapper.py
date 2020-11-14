@@ -32,7 +32,7 @@ class LitModel(pl.LightningModule):
         loss = self.criterion(logits, y)
 
         # training metrics
-        preds = torch.where(logits > 0.5, torch.FloatTensor([1]), torch.FloatTensor([0]))
+        preds = torch.where(logits > 0.5, 1, 0)
         acc = accuracy(preds, y)
         p = precision(preds, y)
         r = recall(preds, y)
@@ -52,8 +52,8 @@ class LitModel(pl.LightningModule):
         logits = self.model(x)
         loss = self.criterion(logits, y)
 
-        # training metrics
-        preds = torch.where(logits > 0.5, torch.FloatTensor([1]), torch.FloatTensor([0]))
+        # validation metrics
+        preds = torch.where(logits > 0.5, 1, 0)
         acc = accuracy(preds, y)
         p = precision(preds, y)
         r = recall(preds, y)
@@ -73,7 +73,7 @@ class LitModel(pl.LightningModule):
     #     logits = self.model(x)
     #     loss = self.criterion(logits, y)
     #
-    #     # training metrics
+    #     # test metrics
     #     preds = torch.where(logits > 0.5, 1, 0)
     #     acc = accuracy(preds, y)
     #     p = precision(preds, y)

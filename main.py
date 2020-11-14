@@ -13,8 +13,6 @@ from pytorch_lightning.loggers import WandbLogger
 from utils.lightning_wrapper import LitModel
 from utils.data_modules import *
 from utils.callbacks import ExampleCallback, SaveOnnxToWandbCallback
-from utils.transform import preprocess
-
 
 
 def init_wandb(config, model, dataloader):
