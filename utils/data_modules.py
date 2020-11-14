@@ -18,6 +18,7 @@ import os
 
 # utils
 from utils.datasets import SkyDatasetDescription, SkyDataset
+from utils.transform import train_preprocess, test_preprocess
 
 
 class MNISTDataModule(pl.LightningDataModule):
@@ -113,12 +114,14 @@ class SkyDataModule(pl.LightningDataModule):
         dataset_length = len(dataset)
         train_dataset_length = int(dataset_length * train_test_split_ratio)
         train_test_split_size = [train_dataset_length, dataset_length - train_dataset_length]
-        self.train_dataset, self.test_dataset = self.data_val = random_split(dataset, train_test_split_size)
+        self.train_dataset, self.test_dataset = random_split(dataset, train_test_split_size)
 
-        self.dims = dataset[0][0].shape
+        # make sure it works
+        self.train_dataset.trasforms = train_preprocess
+        self.test_dataset.trasforms = test_preprocess
 
     def train_dataloader(self, *args, **kwargs) -> DataLoader:
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
 
-    def test_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
+    def val_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
         return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
