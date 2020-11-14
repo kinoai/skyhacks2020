@@ -29,17 +29,17 @@ class LitModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         logits = self.model(x)
-        loss = self.criterion(logits, y.type(torch.float))
+        loss = self.criterion(logits, y)
 
         # training metrics
-        preds = torch.where(logits > 0.5, 1, 0)
+        preds = torch.where(logits > 0.5, torch.FloatTensor([1]), torch.FloatTensor([0]))
         acc = accuracy(preds, y)
         p = precision(preds, y)
         r = recall(preds, y)
         f1 = f1_score(preds, y)
-        self.log('train_f1_score', loss, on_epoch=True, on_step=False)
-        self.log('train_precision', loss, on_epoch=True, on_step=False)
-        self.log('train_recall', loss, on_epoch=True, on_step=False)
+        self.log('train_f1_score', f1, on_epoch=True, on_step=False)
+        self.log('train_precision', p, on_epoch=True, on_step=False)
+        self.log('train_recall', r, on_epoch=True, on_step=False)
         self.log('train_loss', loss, on_epoch=True, on_step=False)
         self.log('train_acc', acc, on_epoch=True, on_step=False)
 
@@ -49,17 +49,17 @@ class LitModel(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self.model(x)
-        loss = self.criterion(logits, y.type(torch.float))
+        loss = self.criterion(logits, y)
 
         # training metrics
-        preds = torch.where(logits > 0.5, 1, 0)
+        preds = torch.where(logits > 0.5, torch.FloatTensor([1]), torch.FloatTensor([0]))
         acc = accuracy(preds, y)
         p = precision(preds, y)
         r = recall(preds, y)
         f1 = f1_score(preds, y)
-        self.log('val_f1_score', loss, on_epoch=True, prog_bar=True)
-        self.log('val_precision', loss, on_epoch=True, prog_bar=True)
-        self.log('val_recall', loss, on_epoch=True, prog_bar=True)
+        self.log('val_f1_score', f1, on_epoch=True, prog_bar=True)
+        self.log('val_precision', p, on_epoch=True, prog_bar=True)
+        self.log('val_recall', r, on_epoch=True, prog_bar=True)
         self.log('val_loss', loss, on_epoch=True, prog_bar=True)
         self.log('val_acc', acc, on_epoch=True, prog_bar=True)
 

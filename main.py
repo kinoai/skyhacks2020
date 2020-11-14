@@ -14,7 +14,6 @@ from utils.lightning_wrapper import LitModel
 from utils.data_modules import *
 from utils.callbacks import ExampleCallback, SaveOnnxToWandbCallback
 
-from utils.transform import preprocess
 
 
 def init_wandb(config, model, dataloader):
@@ -41,7 +40,7 @@ def init_wandb(config, model, dataloader):
 def main(config):
 
     # Init data module
-    datamodule = SkyDataModule(batch_size=config["hparams"]["batch_size"], transforms=preprocess)
+    datamodule = SkyDataModule(batch_size=config["hparams"]["batch_size"])
     datamodule.prepare_data()
     datamodule.setup()
 
