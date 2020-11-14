@@ -1,13 +1,15 @@
 from torch.utils.data import Dataset
+import torch
 from PIL import Image
 
-import csv
-import os
+import csv, os
 
 
 class SkyDatasetDescription:
     def __init__(self, description_file_path: str):
         self.description_file_path = description_file_path
+
+        self.formats = ['JPG', 'JPEG', 'PNG']
 
     def get_description(self):
         with open(self.description_file_path, 'r') as csv_file:
@@ -18,7 +20,12 @@ class SkyDatasetDescription:
 
             for row in reader:
                 file_name = row[0]
-                categories = row[1:]
+                _, ext = file_name.split('.')
+                if ext.upper() not in self.formats:
+                    # print(file_name)
+                    continue
+
+                categories = list(map(lambda x: 1 if x == 'True' else 0, row[1:]))
 
                 sample = {'name': file_name, 'label': categories}
                 description.append(sample)
@@ -41,10 +48,37 @@ class SkyDataset(Dataset):
         if self.trasforms:
             image = self.trasforms(image)
 
-        return image, label
+        return image, torch.FloatTensor(label)
 
     def __len__(self):
         return len(self.dataset_description)
 
 
+class SkyTestDataset(Dataset):
+    def __init__(self, root_dir: str, transforms=None):
+        self.file_paths = []
+        self.filenames = []
+        self.transforms = transforms
+        self.formats = ['JPG', 'JPEG', 'PNG']
 
+        for _, __, files in os.walk(root_dir):
+            for file in files:
+                self.file_paths.append(os.path.join(root_dir, file))
+                self.filenames.append(file)
+
+    def __getitem__(self, item):
+
+        filename = self.file_paths[item]
+        _, ext = filename.split('.')
+        if ext.upper() not in self.formats:
+            return None, self.filenames[item]
+
+        image = Image.open(filename)
+
+        try:
+            if self.transforms:
+                image = self.transforms(image)
+        except Exception:
+            return None, self.filenames[item]
+
+        return image, self.filenames[item]

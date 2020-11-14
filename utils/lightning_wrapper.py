@@ -20,6 +20,8 @@ class LitModel(pl.LightningModule):
         # self.model = ResNetTrasferLearning(config=self.hparams)
         self.model = EfficientNetTransferLearning(config=self.hparams)
 
+        self.criterion = nn.BCELoss()
+
     def forward(self, x):
         return self.model(x)
 
@@ -27,13 +29,19 @@ class LitModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         logits = self.model(x)
-        loss = F.nll_loss(logits, y)
+        loss = self.criterion(logits, y)
 
         # training metrics
-        preds = torch.argmax(logits, dim=1)
+        preds = torch.where(logits > 0.5, 1, 0)
         acc = accuracy(preds, y)
-        self.log('train_loss', loss, on_epoch=True, logger=True)
-        self.log('train_acc', acc, on_epoch=True, logger=True)
+        p = precision(preds, y)
+        r = recall(preds, y)
+        f1 = f1_score(preds, y)
+        self.log('train_f1_score', f1, on_epoch=True, on_step=False, logger=True)
+        self.log('train_precision', p, on_epoch=True, on_step=False, logger=True)
+        self.log('train_recall', r, on_epoch=True, on_step=False, logger=True)
+        self.log('train_loss', loss, on_epoch=True, on_step=False, logger=True)
+        self.log('train_acc', acc, on_epoch=True, on_step=False, logger=True)
 
         return loss
 
@@ -41,13 +49,39 @@ class LitModel(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self.model(x)
-        loss = F.nll_loss(logits, y)
+        loss = self.criterion(logits, y)
 
         # validation metrics
-        preds = torch.argmax(logits, dim=1)
+        preds = torch.where(logits > 0.5, 1, 0)
         acc = accuracy(preds, y)
-        self.log('val_loss', loss, prog_bar=True, logger=True)
-        self.log('val_acc', acc, prog_bar=True, logger=True)
+        p = precision(preds, y)
+        r = recall(preds, y)
+        f1 = f1_score(preds, y)
+        self.log('val_f1_score', f1, on_epoch=True, prog_bar=True)
+        self.log('val_precision', p, on_epoch=True, prog_bar=True)
+        self.log('val_recall', r, on_epoch=True, prog_bar=True)
+        self.log('val_loss', loss, on_epoch=True, prog_bar=True)
+        self.log('val_acc', acc, on_epoch=True, prog_bar=True)
+
+        return loss
+
+    # logic for a single test step
+    def test_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self.model(x)
+        loss = self.criterion(logits, y)
+
+        # test metrics
+        preds = torch.where(logits > 0.5, 1, 0)
+        acc = accuracy(preds, y)
+        p = precision(preds, y)
+        r = recall(preds, y)
+        f1 = f1_score(preds, y)
+        self.log('test_f1_score', f1, on_epoch=True, prog_bar=True)
+        self.log('test_precision', p, on_epoch=True, prog_bar=True)
+        self.log('test_recall', r, on_epoch=True, prog_bar=True)
+        self.log('test_loss', loss, on_epoch=True, prog_bar=True)
+        self.log('test_acc', acc, on_epoch=True, prog_bar=True)
 
         return loss
 

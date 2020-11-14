@@ -1,7 +1,35 @@
+import torch
 from torch import nn
 import torch.nn.functional as F
 from torchvision import models
 from efficientnet_pytorch import EfficientNet
+
+
+class EfficientNetTransferLearning(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+
+        self.model = EfficientNet.from_pretrained('efficientnet-b1')
+
+        for param in self.model.parameters():
+            param.requires_grad = True
+
+        num_ftrs = self.model._fc.in_features
+        self.model._fc = nn.Linear(num_ftrs, 38)
+        # self.lin_1 = nn.Linear(512, 256)
+        # self.lin_2 = nn.Linear(256, 38)
+        # print(num_ftrs)
+
+    def forward(self, x):
+        x = self.model(x)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.2)
+        # x = self.lin_1(x)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.2)
+        # x = self.lin_2(x)
+        return torch.sigmoid(x)
 
 
 class ResNetTrasferLearning(nn.Module):
@@ -22,29 +50,6 @@ class ResNetTrasferLearning(nn.Module):
 
     def forward(self, x):
         return self.model(x)
-
-
-class EfficientNetTransferLearning(nn.Module):
-
-    def __init__(self, config):
-        super().__init__()
-
-        self.model = EfficientNet.from_pretrained('efficientnet-b1')
-
-        for param in self.model.parameters():
-            param.requires_grad = True
-
-        num_ftrs = self.model._fc.in_features
-        self.model._fc = nn.Linear(num_ftrs, 10)
-        print(num_ftrs)
-
-        # self.model._fc = nn.Linear(num_ftrs, 128)
-        # self.lin_1 = nn.Linear(128, 10)
-
-    def forward(self, x):
-        x = self.model(x)
-        # x = self.lin_1(x)
-        return F.log_softmax(x, dim=1)
 
 
 class MNISTExampleModel(nn.Module):
