@@ -10,6 +10,8 @@ class SkyDatasetDescription:
     def __init__(self, description_file_path: str):
         self.description_file_path = description_file_path
 
+        self.formats = ['JPG', 'JPEG', 'PNG']
+
     def get_description(self):
         with open(self.description_file_path, 'r') as csv_file:
             reader = csv.reader(csv_file)
@@ -19,6 +21,11 @@ class SkyDatasetDescription:
 
             for row in reader:
                 file_name = row[0]
+                _, ext = file_name.split('.')
+                if ext.upper() not in self.formats:
+                    print(file_name)
+                    continue
+
                 categories = list(map(lambda x: 1 if x == 'True' else 0, row[1:]))
 
                 sample = {'name': file_name, 'label': categories}
