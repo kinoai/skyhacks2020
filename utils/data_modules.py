@@ -120,3 +120,6 @@ class SkyDataModule(pl.LightningDataModule):
 
     def val_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
         return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
+
+    def test_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
+        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)

@@ -42,6 +42,7 @@ class LitModel(pl.LightningModule):
         self.log('train_recall', r, on_epoch=True, on_step=False)
         self.log('train_loss', loss, on_epoch=True, on_step=False)
         self.log('train_acc', acc, on_epoch=True, on_step=False)
+        self.log('train_f1_v2', 2*p*r/(p+r), on_epoch=True, on_step=False)
 
         return loss
 
@@ -62,8 +63,30 @@ class LitModel(pl.LightningModule):
         self.log('val_recall', r, on_epoch=True, prog_bar=True)
         self.log('val_loss', loss, on_epoch=True, prog_bar=True)
         self.log('val_acc', acc, on_epoch=True, prog_bar=True)
+        self.log('val_f1_v2', 2 * p * r / (p + r), on_epoch=True, prog_bar=True)
 
         return loss
+
+    # logic for a single test step
+    # def test_step(self, batch, batch_idx):
+    #     x, y = batch
+    #     logits = self.model(x)
+    #     loss = self.criterion(logits, y)
+    #
+    #     # training metrics
+    #     preds = torch.where(logits > 0.5, 1, 0)
+    #     acc = accuracy(preds, y)
+    #     p = precision(preds, y)
+    #     r = recall(preds, y)
+    #     f1 = f1_score(preds, y)
+    #     self.log('test_f1_score', f1, on_epoch=True, prog_bar=True)
+    #     self.log('test_precision', p, on_epoch=True, prog_bar=True)
+    #     self.log('test_recall', r, on_epoch=True, prog_bar=True)
+    #     self.log('test_loss', loss, on_epoch=True, prog_bar=True)
+    #     self.log('test_acc', acc, on_epoch=True, prog_bar=True)
+    #     self.log('test_f1_v2', 2 * p * r / (p + r), on_epoch=True, prog_bar=True)
+    #
+    #     return loss
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.hparams.lr)
