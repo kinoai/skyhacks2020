@@ -2,8 +2,7 @@ from torch.utils.data import Dataset
 import torch
 from PIL import Image
 
-import csv
-import os
+import csv, os
 
 
 class SkyDatasetDescription:
@@ -53,6 +52,26 @@ class SkyDataset(Dataset):
 
     def __len__(self):
         return len(self.dataset_description)
+
+
+class SkyValDataset(Dataset):
+    def __init__(self, root_dir: str, transforms = None):
+        self.file_paths = []
+        self.transforms = transforms
+
+        for _, __, files in os.walk(root_dir):
+            for file in files:
+                self.file_paths.append(os.path.join(root_dir, file))
+
+    def __getitem__(self, item):
+        image = Image.open(self.file_paths[item])
+
+        if self.transforms:
+            image = self.transforms(image)
+
+        return image
+
+
 
 
 
