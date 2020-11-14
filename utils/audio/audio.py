@@ -75,3 +75,7 @@ def segments_to_text(segments):
 if __name__ == "__main__":
     file_path = '../../skyhacks_hackathon_dataset/audio_description/tarnowskie_gory_sztolnia_kopalnia_v2_30_10_2020_audiodeskrypcja_FINALNA.mp4'
     convert_mp4_to_wav(file_path)
+    print('Starting Speech2Text service...')
+    segments = prepare_segments(file_path.replace('.mp4', '.wav'))
+    with open('text.txt', 'w') as file:
+        file.write(segments_to_text(segments))
