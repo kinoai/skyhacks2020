@@ -104,8 +104,8 @@ class SkyDataModule(pl.LightningDataModule):
         self.data_val = None
         self.data_test = None
 
-        self.description_path = os.path.join('skyhacks_hackathon_dataset', 'training_labels.csv')
-        self.training_dataset_path = os.path.join('skyhacks_hackathon_dataset', 'training_images')
+        self.description_path = os.path.join('data/skyhacks_hackathon_dataset', 'training_labels.csv')
+        self.training_dataset_path = os.path.join('data/skyhacks_hackathon_dataset', 'training_images')
 
     def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.85):
         train_dataset_description = SkyDatasetDescription(self.description_path)
@@ -120,5 +120,5 @@ class SkyDataModule(pl.LightningDataModule):
     def train_dataloader(self, *args, **kwargs) -> DataLoader:
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
 
-    def test_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
+    def val_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
         return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=4)
