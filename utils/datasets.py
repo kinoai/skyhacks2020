@@ -54,24 +54,29 @@ class SkyDataset(Dataset):
         return len(self.dataset_description)
 
 
-class SkyValDataset(Dataset):
-    def __init__(self, root_dir: str, transforms = None):
+class SkyTestDataset(Dataset):
+    def __init__(self, root_dir: str, transforms=None):
         self.file_paths = []
+        self.filenames = []
         self.transforms = transforms
+        self.formats = ['JPG']
 
         for _, __, files in os.walk(root_dir):
             for file in files:
                 self.file_paths.append(os.path.join(root_dir, file))
+                self.filenames.append(file)
 
     def __getitem__(self, item):
-        image = Image.open(self.file_paths[item])
+
+        filename = self.file_paths[item]
+        _, ext = filename.split('.')
+        if ext not in self.formats:
+            return None, self.filenames[item]
+
+        image = Image.open(filename)
 
         if self.transforms:
             image = self.transforms(image)
 
-        return image
-
-
-
-
+        return image, self.filenames[item]
 
