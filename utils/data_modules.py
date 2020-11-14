@@ -91,10 +91,9 @@ class Cifar10DataModule(pl.LightningDataModule):
 
 
 class SkyDataModule(pl.LightningDataModule):
-    def __init__(self, batch_size, transforms):
+    def __init__(self, batch_size):
         super(SkyDataModule, self).__init__()
         self.batch_size = batch_size
-        self.transforms = transforms
 
         self.train_dataset = None
         self.test_dataset = None
@@ -110,7 +109,7 @@ class SkyDataModule(pl.LightningDataModule):
 
     def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.85):
         train_dataset_description = SkyDatasetDescription(self.description_path)
-        dataset = SkyDataset(self.training_dataset_path, train_dataset_description, self.transforms)
+        dataset = SkyDataset(self.training_dataset_path, train_dataset_description)
         dataset_length = len(dataset)
         train_dataset_length = int(dataset_length * train_test_split_ratio)
         train_test_split_size = [train_dataset_length, dataset_length - train_dataset_length]
