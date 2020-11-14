@@ -10,9 +10,9 @@ import yaml
 from pytorch_lightning.loggers import WandbLogger
 
 # custom utils
-from utils.lightning_wrapper import LitModel
-from utils.data_modules import *
-from utils.callbacks import ExampleCallback, SaveOnnxToWandbCallback
+from sky_utils.lightning_wrapper import LitModel
+from sky_utils.data_modules import *
+from sky_utils.callbacks import ExampleCallback, SaveOnnxToWandbCallback
 
 
 def init_wandb(config, model, dataloader):

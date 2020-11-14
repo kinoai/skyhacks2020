@@ -17,8 +17,8 @@ from typing import Union, List, Optional
 import os
 
 # utils
-from utils.datasets import SkyDatasetDescription, SkyDataset
-from utils.transform import test_preprocess
+from sky_utils.datasets import SkyDatasetDescription, SkyDataset
+from sky_utils.transform import test_preprocess
 
 
 class MNISTDataModule(pl.LightningDataModule):

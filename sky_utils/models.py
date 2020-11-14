@@ -86,4 +86,7 @@ class YoloModel(nn.Module):
         self.model = self.model.autoshape()
 
     def forward(self, x):
-        return self.model(x)
+        for idx, name in enumerate(self.model.names):
+            print(f'{idx}: {name}')
+        x = self.model(x)
+        return x
