@@ -16,6 +16,7 @@ from utils.callbacks import ExampleCallback, SaveOnnxToWandbCallback
 from utils.transform import preprocess
 
 
+
 def init_wandb(config, model, dataloader):
     wandb_logger = WandbLogger(
         project=config["loggers"]["wandb"]["project"],
@@ -40,7 +41,7 @@ def init_wandb(config, model, dataloader):
 def main(config):
 
     # Init data module
-    datamodule = SkyDataModule(batch_size=config["hparams"]["batch_size"], transforms=preprocess)
+    datamodule = SkyDataModule(batch_size=config["hparams"]["batch_size"])
     datamodule.prepare_data()
     datamodule.setup()
 
