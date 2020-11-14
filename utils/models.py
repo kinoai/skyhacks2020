@@ -16,19 +16,19 @@ class EfficientNetTransferLearning(nn.Module):
             param.requires_grad = True
 
         num_ftrs = self.model._fc.in_features
-        self.model._fc = nn.Linear(num_ftrs, 512)
-        self.lin_1 = nn.Linear(512, 256)
-        self.lin_2 = nn.Linear(256, 38)
+        self.model._fc = nn.Linear(num_ftrs, 38)
+        # self.lin_1 = nn.Linear(512, 256)
+        # self.lin_2 = nn.Linear(256, 38)
         # print(num_ftrs)
 
     def forward(self, x):
         x = self.model(x)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.2)
-        x = self.lin_1(x)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.2)
-        x = self.lin_2(x)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.2)
+        # x = self.lin_1(x)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.2)
+        # x = self.lin_2(x)
         return torch.sigmoid(x)
 
 
