@@ -23,7 +23,7 @@ class SkyDatasetDescription:
                 file_name = row[0]
                 _, ext = file_name.split('.')
                 if ext.upper() not in self.formats:
-                    print(file_name)
+                    # print(file_name)
                     continue
 
                 categories = list(map(lambda x: 1 if x == 'True' else 0, row[1:]))
