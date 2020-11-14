@@ -3,12 +3,12 @@ num_of_gpus: -1
 hparams:
     max_epochs: 50
     batch_size: 26
-    lr: 0.002
+    lr: 0.001
     accumulate_grad_batches: 1
     gradient_clip_val: 0.5
-#    lin1_size: 128
-#    lin2_size: 256
-#    lin3_size: 128
+    lin1_size: 512
+    lin2_size: 256
+    output_size: 38
 
 resume:
     resume_from_ckpt: False
@@ -26,12 +26,12 @@ loggers:
 
 callbacks:
     checkpoint:
-        monitor: "val_f1_v2"
+        monitor: "val_f1_score"
         save_top_k: 1
-        save_last: False
+        save_last: True
         mode: "max"
     early_stop:
-        monitor: "val_f1_v2"
+        monitor: "val_f1_score"
         patience: 100
         mode: "max"
 

@@ -18,7 +18,8 @@ fields = [
 ]
 
 config = load_config()
-pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/1brh2881/checkpoints/epoch=8.ckpt", config=config)
+pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/1ex1auvr/checkpoints/epoch=6.ckpt", config=config)
+# pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
 pretrained_model.freeze()
 
 yolo_model = YoloModel()
