@@ -7,7 +7,8 @@ import speech_recognition as sr
 
 
 def convert_mp4_to_wav(file_path):
-    command = f'ffmpeg -i "{file_path}" -ab 160k -ac 1 -ar 44100 -vn {file_path.replace('.mp4', '.wav')}'
+    new_file_path = file_path.replace('.mp4', '.wav')
+    command = f'ffmpeg -i "{file_path}" -ab 160k -ac 1 -ar 44100 -vn "{new_file_path}"'
     code = subprocess.call(command, shell=True)
     if code != 0:
         print('=== Error during MP4->WAV conversion!')
@@ -70,3 +71,7 @@ def segments_to_text(segments):
             print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
     return transcription
+
+if __name__ == "__main__":
+    file_path = '../../skyhacks_hackathon_dataset/audio_description/tarnowskie_gory_sztolnia_kopalnia_v2_30_10_2020_audiodeskrypcja_FINALNA.mp4'
+    convert_mp4_to_wav(file_path)
