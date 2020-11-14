@@ -30,6 +30,10 @@ def init_wandb(config, model, dataloader):
         "model_name": model.model.__class__.__name__,
         "dataset_name": dataloader.__class__.__name__,
         "optimizer": model.configure_optimizers().__class__.__name__,
+        "train_size": len(dataloader.data_train),
+        "val_size": len(dataloader.data_val),
+        "test_size": len(dataloader.data_test),
+        "input_dims": dataloader.input_dims,
     })
     # download model from a specific wandb run
     # wandb.restore('model-best.h5', run_path="kino/some_project/a1b2c3d")
@@ -90,6 +94,7 @@ def main(config):
         # precision=16,
     )
 
+    # Test before training
     # trainer.test(model=model, datamodule=datamodule)
 
     # Train the model ⚡

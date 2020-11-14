@@ -1,5 +1,6 @@
 from torchvision import transforms
 
+
 data_augmentation_transformations = [
     transforms.RandomAffine((-15, 15), translate=(0.2, 0.2)),
     transforms.RandomHorizontalFlip(p=0.8),

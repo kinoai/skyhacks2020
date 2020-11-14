@@ -16,10 +16,10 @@ fields = [
 ]
 
 config = load_config()
-pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/3kw3tr2z/checkpoints/epoch=0.ckpt", config=config)
+pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/1brh2881/checkpoints/epoch=8.ckpt", config=config)
 pretrained_model.freeze()
 
-test_dataset = SkyTestDataset(root_dir="data/skyhacks_hackathon_dataset/live_test_images", transforms=test_preprocess)
+test_dataset = SkyTestDataset(root_dir="skyhacks_hackathon_dataset/live_test_images", transforms=test_preprocess)
 
 # data rows of csv file
 answers = []
