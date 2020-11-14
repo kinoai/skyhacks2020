@@ -1,8 +1,8 @@
-num_of_gpus: 0
+num_of_gpus: -1
 
 hparams:
     max_epochs: 50
-    batch_size: 64
+    batch_size: 32
     lr: 0.001
     accumulate_grad_batches: 1
     gradient_clip_val: 0.5

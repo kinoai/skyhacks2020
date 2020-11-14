@@ -109,15 +109,15 @@ class SkyDataModule(pl.LightningDataModule):
 
     def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.85):
         train_dataset_description = SkyDatasetDescription(self.description_path)
-        dataset = SkyDataset(self.training_dataset_path, train_dataset_description)
+        dataset = SkyDataset(self.training_dataset_path, train_dataset_description, test_preprocess)
         dataset_length = len(dataset)
         train_dataset_length = int(dataset_length * train_test_split_ratio)
         train_test_split_size = [train_dataset_length, dataset_length - train_dataset_length]
         self.train_dataset, self.test_dataset = random_split(dataset, train_test_split_size)
 
         # make sure it works
-        self.train_dataset.trasforms = train_preprocess
-        self.test_dataset.trasforms = test_preprocess
+        # self.train_dataset.trasforms = train_preprocess
+        # self.test_dataset.trasforms = test_preprocess
 
     def train_dataloader(self, *args, **kwargs) -> DataLoader:
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)

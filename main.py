@@ -40,7 +40,7 @@ def init_wandb(config, model, dataloader):
 def main(config):
 
     # Init data module
-    datamodule = SkyDataModule(16)  # Cifar10DataModule(config=config)
+    datamodule = SkyDataModule(batch_size=config["hparams"]["batch_size"])
     datamodule.prepare_data()
     datamodule.setup()
 
