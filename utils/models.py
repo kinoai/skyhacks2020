@@ -16,19 +16,18 @@ class EfficientNetTransferLearning(nn.Module):
             param.requires_grad = True
 
         num_ftrs = self.model._fc.in_features
-        self.model._fc = nn.Linear(num_ftrs, 38)
-        # self.lin_1 = nn.Linear(512, 256)
-        # self.lin_2 = nn.Linear(256, 38)
-        # print(num_ftrs)
+        self.model._fc = nn.Linear(num_ftrs, config["lin1_size"])
+        self.lin_1 = nn.Linear(config["lin1_size"], config["lin2_size"])
+        self.lin_2 = nn.Linear(config["lin2_size"], config["output_size"])
 
     def forward(self, x):
         x = self.model(x)
-        # x = F.relu(x)
-        # x = F.dropout(x, p=0.2)
-        # x = self.lin_1(x)
-        # x = F.relu(x)
-        # x = F.dropout(x, p=0.2)
-        # x = self.lin_2(x)
+        x = F.relu(x)
+        x = F.dropout(x, p=0.2)
+        x = self.lin_1(x)
+        x = F.relu(x)
+        x = F.dropout(x, p=0.2)
+        x = self.lin_2(x)
         return torch.sigmoid(x)
 
 
@@ -39,13 +38,13 @@ class ResNetTrasferLearning(nn.Module):
 
         self.model = models.resnet50(pretrained=True)
         for param in self.model.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
 
         self.model.fc = nn.Sequential(
-            nn.Linear(self.model.fc.in_features, 128),
+            nn.Linear(self.model.fc.in_features, config["lin1_size"]),
             nn.ReLU(),
-            nn.Linear(128, 10),
-            nn.LogSoftmax(dim=1)
+            nn.Linear(config["lin1_size"], config["output_size"]),
+            nn.Sigmoid()
         )
 
     def forward(self, x):

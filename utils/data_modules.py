@@ -107,7 +107,7 @@ class SkyDataModule(pl.LightningDataModule):
         self.description_path = os.path.join('skyhacks_hackathon_dataset', 'training_labels.csv')
         self.training_dataset_path = os.path.join('skyhacks_hackathon_dataset', 'training_images')
 
-    def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.999):
+    def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.93):
         train_dataset_description = SkyDatasetDescription(self.description_path)
         dataset = SkyDataset(self.training_dataset_path, train_dataset_description, train_preprocess)
         dataset_length = len(dataset)
