@@ -1,5 +1,4 @@
 from decord import VideoReader, cpu
-import numpy as np
 
 
 def extract_frames(path, skip=25):
@@ -7,8 +6,8 @@ def extract_frames(path, skip=25):
         vr = VideoReader(f, ctx=cpu(0))
     # (batch_size, height, width, channels)
     frames = vr.get_batch([range(0, len(vr), skip)]).asnumpy()
-    return np.swapaxes(frames, 1, 3)
-
+    # return np.swapaxes(frames, 1, 3)
+    return frames
 
 # path = r"C:\Users\kacwl\Downloads\test.mp4"
 
