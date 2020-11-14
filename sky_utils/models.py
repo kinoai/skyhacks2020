@@ -4,6 +4,8 @@ import torch.nn.functional as F
 from torchvision import models
 from efficientnet_pytorch import EfficientNet
 
+from sky_utils.yolo_names import yolo_to_sky_mapper, class_names
+
 
 class EfficientNetTransferLearning(nn.Module):
 
@@ -76,3 +78,23 @@ class MNISTExampleModel(nn.Module):
         x = self.layer_4(x)
 
         return F.log_softmax(x, dim=1)
+
+
+class YoloModel(nn.Module):
+    def __init__(self, probability_treshold=0.8):
+        super().__init__()
+        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).fuse().eval()  # yolov5s.pt
+        self.model = self.model.autoshape()
+        self.probability_treshold = probability_treshold
+
+    def forward(self, x):
+        predictions = self.model(x)
+        y = torch.zeros(38)
+
+        if len(predictions) > 0 and predictions[0] is not None:
+            for pred in predictions[0]:
+                class_index = int(pred[5].item())
+                if class_index in yolo_to_sky_mapper.keys() and pred[4].item() > self.probability_treshold:
+                    y[yolo_to_sky_mapper[class_index]] = 1
+
+        return torch.Tensor(y)
