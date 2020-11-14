@@ -82,11 +82,11 @@ class MNISTExampleModel(nn.Module):
 
 
 class YoloModel(nn.Module):
-    def __init__(self):
+    def __init__(self, probability_treshold=0.8):
         super().__init__()
         self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).fuse().eval()  # yolov5s.pt
         self.model = self.model.autoshape()
-        self.probability_treshold = 0.8
+        self.probability_treshold = probability_treshold
 
     def forward(self, x):
         predictions = self.model(x)
