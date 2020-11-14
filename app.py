@@ -11,7 +11,6 @@ labels = df.columns.tolist()[1:]
 
 
 def frame_summary(frame):
-    print(frame.shape)
     fig = plt.figure()
     plt.imshow(frame)
     plt.axis("off")
