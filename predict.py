@@ -29,7 +29,7 @@ for img, filename in test_dataset:
 
     if img is None:
         print(filename)
-        zeros = [0 for x in fields]
+        zeros = [0 for x in range(len(fields)-1)]
         answers.append([filename] + zeros)
         continue
 
@@ -44,15 +44,14 @@ def sortFunc(e):
     return e[0]
 
 
-answers = answers.sort(key=sortFunc)
-
-print(type(answers))
+answers.sort(key=sortFunc)
+print(answers)
 
 # name of csv file
 filename = "task1_answers.csv"
 
 # writing to csv file
-with open(filename, 'w') as csvfile:
+with open(filename, 'w', newline='') as csvfile:
     # creating a csv writer object
     csvwriter = csv.writer(csvfile)
 
