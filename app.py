@@ -59,7 +59,7 @@ def video_summary(predictions, duration):
                 if predictions[i - 1, j] == 1:
                     plt.plot([i - 1, i], [j, j], lw=5, c='#4C78A8')
                 else:
-                    plt.scatter(i, j, s=5, c='#4C78A8', marker='s')
+                    plt.scatter(i, j, s=7, c='#4C78A8', marker='s')
     st.pyplot(fig)
 
 
@@ -76,7 +76,7 @@ def main():
         fps = int(vc.get(cv2.CAP_PROP_FPS))
         totalNoFrames = vc.get(cv2.CAP_PROP_FRAME_COUNT)
         duration_in_seconds = float(totalNoFrames) / float(fps)
-        res = {'frames': extract_frames(tfile.name, skip=1)}
+        res = {'frames': extract_frames(tfile.name, skip=fps)}
         res['scores'] = [predict(frame) for frame in res['frames']]
         st.header("Selected video")
         st.video(file)
