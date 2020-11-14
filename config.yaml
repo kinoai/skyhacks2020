@@ -26,12 +26,12 @@ loggers:
 
 callbacks:
     checkpoint:
-        monitor: "val_f1_v2"
+        monitor: "val_f1_score"
         save_top_k: 1
-        save_last: False
+        save_last: True
         mode: "max"
     early_stop:
-        monitor: "val_f1_v2"
+        monitor: "val_f1_score"
         patience: 100
         mode: "max"
 

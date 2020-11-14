@@ -18,7 +18,7 @@ import os
 
 # utils
 from utils.datasets import SkyDatasetDescription, SkyDataset
-from utils.transform import test_preprocess
+from utils.transform import test_preprocess, train_preprocess
 
 
 class MNISTDataModule(pl.LightningDataModule):
@@ -83,7 +83,6 @@ class Cifar10DataModule(pl.LightningDataModule):
         self.config["hparams"]["num_of_inputs"] = np.prod(self.input_dims)
         self.data_test = CIFAR10(self.data_dir, train=False, transform=self.transform)
 
-
     def train_dataloader(self):
         return DataLoader(self.data_train, batch_size=self.batch_size)
 
@@ -108,9 +107,9 @@ class SkyDataModule(pl.LightningDataModule):
         self.description_path = os.path.join('skyhacks_hackathon_dataset', 'training_labels.csv')
         self.training_dataset_path = os.path.join('skyhacks_hackathon_dataset', 'training_images')
 
-    def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.85):
+    def setup(self, stage: Optional[str] = None, train_test_split_ratio=0.999):
         train_dataset_description = SkyDatasetDescription(self.description_path)
-        dataset = SkyDataset(self.training_dataset_path, train_dataset_description, test_preprocess)
+        dataset = SkyDataset(self.training_dataset_path, train_dataset_description, train_preprocess)
         dataset_length = len(dataset)
         train_dataset_length = int(dataset_length * train_test_split_ratio)
         train_test_split_size = [train_dataset_length, dataset_length - train_dataset_length]
@@ -124,5 +123,5 @@ class SkyDataModule(pl.LightningDataModule):
     def val_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
         return DataLoader(self.data_val, batch_size=self.batch_size, shuffle=False, num_workers=4)
 
-    # def test_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
-    #     return DataLoader(self.data_train, batch_size=self.batch_size, shuffle=False, num_workers=4)
+    def test_dataloader(self, *args, **kwargs) -> Union[DataLoader, List[DataLoader]]:
+        return DataLoader(self.data_train, batch_size=self.batch_size, shuffle=False, num_workers=4)

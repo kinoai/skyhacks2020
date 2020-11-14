@@ -25,7 +25,7 @@ def init_wandb(config, model, dataloader):
         log_model=config["loggers"]["wandb"]["log_model"],
         offline=False
     )
-    # wandb_logger.watch(model.model) # dont do this for large models xDDD
+    wandb_logger.watch(model.model, log=None)
     wandb_logger.log_hyperparams({
         "model_name": model.model.__class__.__name__,
         "dataset_name": dataloader.__class__.__name__,
@@ -86,8 +86,8 @@ def main(config):
         weights_summary=config["printing"]["weights_summary"],
         # fast_dev_run=True,
         # min_epochs=10,
-        # limit_train_batches=0.01
-        # limit_val_batches=0.01
+        # limit_train_batches=0.05,
+        # limit_val_batches=0.05,
         # limit_test_batches=0.01
         # auto_scale_batch_size="power",
         # amp_backend='apex',
@@ -96,6 +96,7 @@ def main(config):
 
     # Test before training
     # trainer.test(model=model, datamodule=datamodule)
+    # trainer.save_checkpoint("example.ckpt")
 
     # Train the model ⚡
     trainer.fit(model=model, datamodule=datamodule)
