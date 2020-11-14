@@ -59,7 +59,7 @@ class SkyTestDataset(Dataset):
         self.file_paths = []
         self.filenames = []
         self.transforms = transforms
-        self.formats = ['JPG']
+        self.formats = ['JPG', 'JPEG', 'PNG']
 
         for _, __, files in os.walk(root_dir):
             for file in files:
@@ -70,13 +70,15 @@ class SkyTestDataset(Dataset):
 
         filename = self.file_paths[item]
         _, ext = filename.split('.')
-        if ext not in self.formats:
+        if ext.upper() not in self.formats:
             return None, self.filenames[item]
 
         image = Image.open(filename)
 
-        if self.transforms:
-            image = self.transforms(image)
+        try:
+            if self.transforms:
+                image = self.transforms(image)
+        except Exception:
+            return None, self.filenames[item]
 
         return image, self.filenames[item]
-
