@@ -13,6 +13,8 @@ class EfficientNetTransferLearning(nn.Module):
         super().__init__()
 
         self.model = EfficientNet.from_pretrained('efficientnet-b1')
+        # self.model = EfficientNet.from_pretrained('efficientnet-b0')
+        # self.model = EfficientNet.from_pretrained('efficientnet-b7')
 
         for param in self.model.parameters():
             param.requires_grad = True
