@@ -11,4 +11,4 @@ streamlit~=0.71.0
 altair~=4.1.0
 pandas~=1.1.4
 matplotlib~=3.3.2
-decord~=0.4.1
+decord~=0.4.2
