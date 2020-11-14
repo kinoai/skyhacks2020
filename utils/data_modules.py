@@ -13,12 +13,12 @@ from torchvision import transforms
 import numpy as np
 
 # standard
-from typing import Any, Union, List, Optional
+from typing import Union, List, Optional
 import os
 
 # utils
 from utils.datasets import SkyDatasetDescription, SkyDataset
-from utils.transform import train_preprocess, test_preprocess
+from utils.transform import test_preprocess
 
 
 class MNISTDataModule(pl.LightningDataModule):
@@ -114,10 +114,6 @@ class SkyDataModule(pl.LightningDataModule):
         train_dataset_length = int(dataset_length * train_test_split_ratio)
         train_test_split_size = [train_dataset_length, dataset_length - train_dataset_length]
         self.train_dataset, self.test_dataset = random_split(dataset, train_test_split_size)
-
-        # make sure it works
-        # self.train_dataset.trasforms = train_preprocess
-        # self.test_dataset.trasforms = test_preprocess
 
     def train_dataloader(self, *args, **kwargs) -> DataLoader:
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=4)
