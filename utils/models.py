@@ -77,3 +77,13 @@ class MNISTExampleModel(nn.Module):
         x = self.layer_4(x)
 
         return F.log_softmax(x, dim=1)
+
+
+class YoloModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).fuse().eval()  # yolov5s.pt
+        self.model = self.model.autoshape()
+
+    def forward(self, x):
+        return self.model(x)
