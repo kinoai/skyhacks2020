@@ -7,6 +7,7 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install streamlit
 RUN apt-get update
 RUN apt-get install 'ffmpeg' 'libsm6' 'libxext6' -y
+RUN python3 -m spacy download pl_core_news_sm
+RUN python3 -m nltk.downloader popular
 COPY . .
 CMD streamlit run ./streamlit_app/app.py
-

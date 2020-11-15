@@ -12,3 +12,7 @@ altair~=4.1.0
 pandas~=1.1.4
 matplotlib~=3.3.2
 decord~=0.4.2
+pydub~=0.24.1
+SpeechRecognition==3.8.1
+spacy~=2.3.2
+nltk~=3.5
