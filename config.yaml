@@ -2,9 +2,9 @@ num_of_gpus: -1
 
 hparams:
     max_epochs: 50
-    batch_size: 32
-    lr: 0.001
-    accumulate_grad_batches: 1
+    batch_size: 28
+    lr: 0.0015
+    accumulate_grad_batches: 5
     gradient_clip_val: 0.5
     lin1_size: 512
     lin2_size: 256
@@ -12,9 +12,9 @@ hparams:
     weight_decay: 0.00005
 
 resume:
-    resume_from_ckpt: False
-    wandb_run_id: None
-    ckpt_path: "random_tests/2ne7r2cm/checkpoints/epoch=15.ckpt"
+    resume_from_ckpt: True
+    wandb_run_id: resumedRun2
+    ckpt_path: "epoch=25.ckpt"
 
 loggers:
     wandb:
