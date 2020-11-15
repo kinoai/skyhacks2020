@@ -1,4 +1,4 @@
-from decord import VideoReader, cpu, gpu
+from decord import VideoReader, cpu
 from PIL import Image
 
 
@@ -9,8 +9,3 @@ def extract_frames(path, skip=25):
     batch = vr.get_batch([range(0, len(vr), skip)]).asnumpy()
     frames = [Image.fromarray(frame) for frame in batch]
     return frames
-
-# path = r"C:\Users\kacwl\Downloads\test.mp4"
-
-# frames = extract_frames(path)
-# print(frames.shape)

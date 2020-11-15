@@ -1,10 +1,10 @@
-from utils.lightning_wrapper import LitModel
-from utils.transform import test_preprocess
+from sky_utils.lightning_wrapper import LitModel
+from sky_utils.transform import test_preprocess
 from main import load_config
 import torch
 
 config = load_config()
-pretrained_model = LitModel.load_from_checkpoint("last.ckpt", config=config)
+pretrained_model = LitModel.load_from_checkpoint("epoch=27.ckpt", config=config)
 pretrained_model.freeze()
 
 

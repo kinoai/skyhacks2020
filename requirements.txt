@@ -3,7 +3,7 @@ pytorch-lightning-bolts>=0.2.5
 wandb>=0.10.10
 PyYAML>=5.3.1
 efficientnet-pytorch>=0.7.0
-
+opencv-python>=4.4.0
 torchvision~=0.8.1
 pillow~=8.0.1
 numpy~=1.19.2
