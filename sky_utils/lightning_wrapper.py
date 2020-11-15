@@ -4,10 +4,11 @@ import torch.nn.functional as F
 
 # pytorch lightning
 import pytorch_lightning as pl
+import wandb
 from pytorch_lightning.metrics.functional import accuracy, precision, recall, f1_score, fbeta_score
 
 # custom models
-from utils.models import *
+from sky_utils.models import *
 
 
 class LitModel(pl.LightningModule):
@@ -63,7 +64,7 @@ class LitModel(pl.LightningModule):
         self.log('val_loss', loss, on_epoch=True, prog_bar=True)
         self.log('val_acc', acc, on_epoch=True, prog_bar=True)
 
-        return loss
+        return preds, y
 
     # logic for a single test step
     def test_step(self, batch, batch_idx):
@@ -85,5 +86,45 @@ class LitModel(pl.LightningModule):
 
         return loss
 
+    def validation_epoch_end(self, validation_step_outputs):
+        f1_p_r_heatmap = torch.zeros((3, 38))
+
+        preds_stacked = validation_step_outputs[0][0]
+        y_stacked = validation_step_outputs[0][1]
+
+        for i in range(1, len(validation_step_outputs)):
+            preds, y = validation_step_outputs[i]
+            preds_stacked = torch.cat((preds_stacked, preds))
+            y_stacked = torch.cat((y_stacked, y))
+
+        # F1
+        for i in range(f1_p_r_heatmap.size()[1]):
+            f1_p_r_heatmap[0][i] = f1_score(preds_stacked[:, i], y_stacked[:, i])
+
+        # Precision
+        for i in range(f1_p_r_heatmap.size()[1]):
+            f1_p_r_heatmap[1][i] = precision(preds_stacked[:, i], y_stacked[:, i])
+
+        # Recall
+        for i in range(f1_p_r_heatmap.size()[1]):
+            f1_p_r_heatmap[2][i] = recall(preds_stacked[:, i], y_stacked[:, i])
+
+        class_names = [
+            "Amusement park", "Animals", "Bench", "Building", "Castle", "Cave", "Church", "City", "Cross",
+            "Cultural institution", "Food", "Footpath", "Forest", "Furniture", "Grass", "Graveyard", "Lake",
+            "Landscape", "Mine", "Monument", "Motor vehicle", "Mountains", "Museum", "Open-air museum", "Park",
+            "Person", "Plants", "Reservoir", "River", "Road", "Rocks", "Snow", "Sport", "Sports facility", "Stairs",
+            "Trees", "Watercraft", "Windows"
+        ]
+
+        self.logger.experiment.log({
+            "f1_p_r_heatmap": wandb.plots.HeatMap(
+                class_names,
+                ["f1", "precision", "recall"],
+                f1_p_r_heatmap.tolist(),
+                show_text=True
+            )
+        })
+
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr)
+        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr, weight_decay=0.00005)

@@ -1,8 +1,9 @@
-from torch.utils.data import Dataset
+import csv
+import os
+
 import torch
 from PIL import Image
-
-import csv, os
+from torch.utils.data import Dataset
 
 
 class SkyDatasetDescription:

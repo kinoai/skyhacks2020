@@ -1,10 +1,13 @@
 import torch
-from utils.lightning_wrapper import LitModel
-from utils.datasets import SkyTestDataset
-from utils.transform import test_preprocess
+from sky_utils.lightning_wrapper import LitModel
+from sky_utils.datasets import SkyTestDataset
+from sky_utils.transform import test_preprocess
+from sky_utils.models import YoloModel
+from sky_utils.yolo_names import yolo_to_sky_mapper, to_be_replaced
 from main import load_config
 import csv
 
+from tqdm import tqdm
 
 # field names
 fields = [
@@ -16,15 +19,17 @@ fields = [
 ]
 
 config = load_config()
-# pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/1brh2881/checkpoints/epoch=8.ckpt", config=config)
-pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
+pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/model/epoch=20.ckpt", config=config)
+# pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
 pretrained_model.freeze()
 
-test_dataset = SkyTestDataset(root_dir="skyhacks_hackathon_dataset/live_test_images", transforms=test_preprocess)
+yolo_model = YoloModel(0.5)
+
+test_dataset = SkyTestDataset(root_dir="skyhacks_hackathon_dataset/live_test_images", transforms=None)
 
 # data rows of csv file
 answers = []
-for img, filename in test_dataset:
+for img, filename in tqdm(test_dataset):
 
     if img is None:
         print(filename)
@@ -32,11 +37,22 @@ for img, filename in test_dataset:
         answers.append([filename] + zeros)
         continue
 
-    img = img.reshape((1, 3, 224, 224))
-    logits = pretrained_model(img)
+    try:
+        transformed_image = test_preprocess(img)
+    except Exception:
+        print(filename)
+        zeros = [0 for x in range(len(fields) - 1)]
+        answers.append([filename] + zeros)
+        continue
+
+    yolo_logits = yolo_model(img)
+    transformed_image = transformed_image.reshape((1, 3, 224, 224))
+    logits = pretrained_model(transformed_image)
     logits = logits.squeeze()
     preds = torch.where(logits > 0.5, 1, 0).tolist()
-    answers.append([filename] + preds)
+    yolo_preds = torch.where(yolo_logits > 0.5, 1, 0).tolist()
+    final_preds = [yolo_preds[i] if i in to_be_replaced else preds[i] for i in range(len(preds))]
+    answers.append([filename] + final_preds)
 
 
 def sortFunc(e):
@@ -59,3 +75,5 @@ with open(filename, 'w', newline='') as csvfile:
 
     # writing the data rows
     csvwriter.writerows(answers)
+
+print(f'Answers saved to file {filename}')
