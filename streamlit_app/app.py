@@ -44,7 +44,7 @@ def load_data(file):
     # duration_in_streamseconds = float(totalNoFrames) / float(fps)
     res = {'frames': extract_frames(tfile.name, skip=fps)}
     res['scores'] = [predict(frame) for frame in res['frames']]
-    res['labels' = labels]
+    res['labels'] = labels
     return res, fps
 
 
