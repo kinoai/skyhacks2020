@@ -23,7 +23,7 @@ pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/model/epoch=20.ck
 # pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
 pretrained_model.freeze()
 
-yolo_model = YoloModel(0.25)
+yolo_model = YoloModel(0.5)
 
 test_dataset = SkyTestDataset(root_dir="skyhacks_hackathon_dataset/live_test_images", transforms=None)
 
