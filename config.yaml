@@ -2,18 +2,19 @@ num_of_gpus: -1
 
 hparams:
     max_epochs: 50
-    batch_size: 16
+    batch_size: 32
     lr: 0.001
     accumulate_grad_batches: 1
     gradient_clip_val: 0.5
-    lin1_size: 256
-    lin2_size: 128
+    lin1_size: 512
+    lin2_size: 256
     output_size: 38
+    weight_decay: 0.00005
 
 resume:
     resume_from_ckpt: False
-    wandb_run_id: "8uuomodb"
-    ckpt_path: "wandb/run-20201111_022721-8uuomodb/files/hackathon_template_test/8uuomodb/checkpoints/epoch=2.ckpt"
+    wandb_run_id: None
+    ckpt_path: "random_tests/2ne7r2cm/checkpoints/epoch=15.ckpt"
 
 loggers:
     wandb:
@@ -32,10 +33,10 @@ callbacks:
         mode: "max"
     early_stop:
         monitor: "val_f1_score"
-        patience: 100
+        patience: 6
         mode: "max"
 
 printing:
-    progress_bar_refresh_rate: 10
+    progress_bar_refresh_rate: 5
     weights_summary: "top"
     profiler: False

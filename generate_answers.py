@@ -19,7 +19,7 @@ fields = [
 ]
 
 config = load_config()
-pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/model/epoch=20.ckpt", config=config)
+pretrained_model = LitModel.load_from_checkpoint("epoch=6.ckpt", config=config)
 # pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
 pretrained_model.freeze()
 

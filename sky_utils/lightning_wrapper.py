@@ -5,10 +5,15 @@ import torch.nn.functional as F
 # pytorch lightning
 import pytorch_lightning as pl
 import wandb
-from pytorch_lightning.metrics.functional import accuracy, precision, recall, f1_score, fbeta_score
 
 # custom models
 from sky_utils.models import *
+
+# sklearn
+from sklearn.metrics import precision_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
 
 
 class LitModel(pl.LightningModule):
@@ -33,11 +38,13 @@ class LitModel(pl.LightningModule):
         loss = self.criterion(logits, y)
 
         # training metrics
-        preds = torch.where(logits > 0.5, 1, 0)
-        acc = accuracy(preds, y)
-        p = precision(preds, y)
-        r = recall(preds, y)
-        f1 = f1_score(preds, y)
+        preds = torch.where(logits > 0.5, 1, 0).cpu()
+        y = y.cpu()
+        acc = accuracy_score(preds, y)
+        p = precision_score(preds, y, average="micro")
+        r = recall_score(preds, y, average="micro")
+        f1 = f1_score(preds, y, average="micro")
+
         self.log('train_f1_score', f1, on_epoch=True, on_step=False, logger=True)
         self.log('train_precision', p, on_epoch=True, on_step=False, logger=True)
         self.log('train_recall', r, on_epoch=True, on_step=False, logger=True)
@@ -53,18 +60,20 @@ class LitModel(pl.LightningModule):
         loss = self.criterion(logits, y)
 
         # validation metrics
-        preds = torch.where(logits > 0.5, 1, 0)
-        acc = accuracy(preds, y)
-        p = precision(preds, y)
-        r = recall(preds, y)
-        f1 = f1_score(preds, y)
+        preds = torch.where(logits > 0.5, 1, 0).cpu()
+        y = y.cpu()
+        acc = accuracy_score(preds, y)
+        p = precision_score(preds, y, average="micro")
+        r = recall_score(preds, y, average="micro")
+        f1 = f1_score(preds, y, average="micro")
+
         self.log('val_f1_score', f1, on_epoch=True, prog_bar=True)
         self.log('val_precision', p, on_epoch=True, prog_bar=True)
         self.log('val_recall', r, on_epoch=True, prog_bar=True)
         self.log('val_loss', loss, on_epoch=True, prog_bar=True)
         self.log('val_acc', acc, on_epoch=True, prog_bar=True)
 
-        return preds, y
+        return preds.cpu(), y.cpu()
 
     # logic for a single test step
     def test_step(self, batch, batch_idx):
@@ -73,11 +82,13 @@ class LitModel(pl.LightningModule):
         loss = self.criterion(logits, y)
 
         # test metrics
-        preds = torch.where(logits > 0.5, 1, 0)
-        acc = accuracy(preds, y)
-        p = precision(preds, y)
-        r = recall(preds, y)
-        f1 = f1_score(preds, y)
+        preds = torch.where(logits > 0.5, 1, 0).cpu()
+        y = y.cpu()
+        acc = accuracy_score(preds, y)
+        p = precision_score(preds, y, average="micro")
+        r = recall_score(preds, y, average="micro")
+        f1 = f1_score(preds, y, average="micro")
+
         self.log('test_f1_score', f1, on_epoch=True, prog_bar=True)
         self.log('test_precision', p, on_epoch=True, prog_bar=True)
         self.log('test_recall', r, on_epoch=True, prog_bar=True)
@@ -87,6 +98,7 @@ class LitModel(pl.LightningModule):
         return loss
 
     def validation_epoch_end(self, validation_step_outputs):
+        """Generate f1, precision and recall heatmap"""
         f1_p_r_heatmap = torch.zeros((3, 38))
 
         preds_stacked = validation_step_outputs[0][0]
@@ -103,11 +115,11 @@ class LitModel(pl.LightningModule):
 
         # Precision
         for i in range(f1_p_r_heatmap.size()[1]):
-            f1_p_r_heatmap[1][i] = precision(preds_stacked[:, i], y_stacked[:, i])
+            f1_p_r_heatmap[1][i] = precision_score(preds_stacked[:, i], y_stacked[:, i])
 
         # Recall
         for i in range(f1_p_r_heatmap.size()[1]):
-            f1_p_r_heatmap[2][i] = recall(preds_stacked[:, i], y_stacked[:, i])
+            f1_p_r_heatmap[2][i] = recall_score(preds_stacked[:, i], y_stacked[:, i])
 
         class_names = [
             "Amusement park", "Animals", "Bench", "Building", "Castle", "Cave", "Church", "City", "Cross",
@@ -117,14 +129,17 @@ class LitModel(pl.LightningModule):
             "Trees", "Watercraft", "Windows"
         ]
 
+        # print(f1_p_r_heatmap)
+
         self.logger.experiment.log({
-            "f1_p_r_heatmap": wandb.plots.HeatMap(
+            f"f1_p_r_heatmap{self.current_epoch}": wandb.plots.HeatMap(
                 class_names,
                 ["f1", "precision", "recall"],
                 f1_p_r_heatmap.tolist(),
-                show_text=True
+                show_text=True,
+
             )
         })
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr, weight_decay=0.00005)
+        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr, weight_decay=self.hparams["weight_decay"])
