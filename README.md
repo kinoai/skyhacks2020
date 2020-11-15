@@ -11,7 +11,7 @@ Run in project root:
 ### Running and stopping Streamlit docker container from an image
 The command below will run a Streamlit app in the background (as a deamon):
 ```
-    docker run -p 8501:8501 -d streamlit_skyhacks3:latest
+    docker run -p 80:8501 -d streamlit_skyhacks3:latest
 ```
 Now you can access the Streamlit app from the browser at the `<localhost or server IP>:8501`
 
