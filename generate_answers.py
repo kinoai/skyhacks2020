@@ -19,7 +19,7 @@ fields = [
 ]
 
 config = load_config()
-pretrained_model = LitModel.load_from_checkpoint("epoch=6.ckpt", config=config)
+pretrained_model = LitModel.load_from_checkpoint("epoch=27.ckpt", config=config)
 # pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
 pretrained_model.freeze()
 
@@ -49,8 +49,8 @@ for img, filename in tqdm(test_dataset):
     transformed_image = transformed_image.reshape((1, 3, 224, 224))
     logits = pretrained_model(transformed_image)
     logits = logits.squeeze()
-    preds = torch.where(logits > 0.5, 1, 0).tolist()
-    yolo_preds = torch.where(yolo_logits > 0.5, 1, 0).tolist()
+    preds = torch.where(logits > 0.2, 1, 0).tolist()
+    yolo_preds = torch.where(yolo_logits > 0.1, 1, 0).tolist()
     final_preds = [yolo_preds[i] if i in to_be_replaced else preds[i] for i in range(len(preds))]
     answers.append([filename] + final_preds)
 
