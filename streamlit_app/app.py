@@ -4,6 +4,8 @@ from movie_to_frames import extract_frames
 import altair as alt
 import pandas as pd
 from predict_example import predict
+from audio import convert_mp4_to_wav, prepare_segments, segments_to_text
+from nlp import lemmize_text, detect_labels
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,12 +29,22 @@ words = {'building': {'strop': 1}, 'castle': {'zamek': 8}, 'cave': {'strop': 1}}
 def load_data(file):
     tfile = tempfile.NamedTemporaryFile(delete=False)
     tfile.write(file.read())
+
+    convert_mp4_to_wav(tfile.name)
+    segments = prepare_segments(tfile.name + '.wav')
+    text = segments_to_text(segments)
+    text = nlp.lemmize_text(text)
+
+    labels = nlp.detect_labels(text)
+    print(f"labels-------\n{labels}")
+
     vc = cv2.VideoCapture(tfile.name)
     fps = int(vc.get(cv2.CAP_PROP_FPS))
     # totalNoFrames = vc.get(cv2.CAP_PROP_FRAME_COUNT)
     # duration_in_streamseconds = float(totalNoFrames) / float(fps)
     res = {'frames': extract_frames(tfile.name, skip=fps)}
     res['scores'] = [predict(frame) for frame in res['frames']]
+    res['labels' = labels]
     return res, fps
 
 
@@ -77,8 +89,8 @@ def video_summary(predictions):
     return fig
 
 
-# def text_summary():
-#     pass
+def text_summary(labels):
+    print(labels)
 
 
 def main():
@@ -100,6 +112,10 @@ def main():
                      "appears on the video")
         fig = video_summary(res['scores'])
         st.pyplot(fig)
+
+        st.header("Audio labels detection")
+        st.write(text_summary(res['labels']))
+
     else:
         st.write("Please upload your video!")
 

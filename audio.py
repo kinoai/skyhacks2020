@@ -7,7 +7,7 @@ import speech_recognition as sr
 
 
 def convert_mp4_to_wav(file_path):
-    new_file_path = file_path.replace('.mp4', '.wav')
+    new_file_path = file_path + '.wav'
     command = f'ffmpeg -i "{file_path}" -ab 160k -ac 1 -ar 44100 -vn "{new_file_path}"'
     code = subprocess.call(command, shell=True)
     if code != 0:
