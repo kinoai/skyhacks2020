@@ -3,6 +3,7 @@ from sky_utils.lightning_wrapper import LitModel
 from sky_utils.datasets import SkyTestDataset
 from sky_utils.transform import test_preprocess
 from sky_utils.models import YoloModel
+from sky_utils.yolo_names import yolo_to_sky_mapper, to_be_replaced
 from main import load_config
 import csv
 
@@ -22,7 +23,7 @@ pretrained_model = LitModel.load_from_checkpoint("skyhacks2020/model/epoch=20.ck
 # pretrained_model = LitModel.load_from_checkpoint("example.ckpt", config=config)
 pretrained_model.freeze()
 
-yolo_model = YoloModel(0.5)
+yolo_model = YoloModel(0.25)
 
 test_dataset = SkyTestDataset(root_dir="skyhacks_hackathon_dataset/live_test_images", transforms=None)
 
@@ -50,7 +51,7 @@ for img, filename in tqdm(test_dataset):
     logits = logits.squeeze()
     preds = torch.where(logits > 0.5, 1, 0).tolist()
     yolo_preds = torch.where(yolo_logits > 0.5, 1, 0).tolist()
-    final_preds = [int(yolo_preds[i] or preds[i]) for i in range(len(preds))]
+    final_preds = [yolo_preds[i] if i in to_be_replaced else preds[i] for i in range(len(preds))]
     answers.append([filename] + final_preds)
 
 
