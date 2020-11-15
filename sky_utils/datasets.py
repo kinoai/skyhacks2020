@@ -21,7 +21,7 @@ class SkyDatasetDescription:
 
             for row in reader:
                 file_name = row[0]
-                _, ext = file_name.split('.')
+                *_, ext = file_name.split('.')
                 if ext.upper() not in self.formats:
                     # print(file_name)
                     continue

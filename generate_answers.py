@@ -52,7 +52,7 @@ for img, filename in tqdm(test_dataset):
     preds = torch.where(logits > 0.2, 1, 0).tolist()
     yolo_preds = torch.where(yolo_logits > 0.1, 1, 0).tolist()
     final_preds = [yolo_preds[i] if i in to_be_replaced else preds[i] for i in range(len(preds))]
-    answers.append([filename] + final_preds)
+    answers.append([filename] + preds)
 
 
 def sortFunc(e):
