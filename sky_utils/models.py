@@ -25,10 +25,10 @@ class EfficientNetTransferLearning(nn.Module):
     def forward(self, x):
         x = self.model(x)
         x = F.relu(x)
-        x = F.dropout(x, p=0.2)
+        # x = F.dropout(x, p=0.2)
         x = self.lin_1(x)
         x = F.relu(x)
-        x = F.dropout(x, p=0.2)
+        # x = F.dropout(x, p=0.2)
         x = self.lin_2(x)
         return torch.sigmoid(x)
 
