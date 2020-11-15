@@ -74,8 +74,7 @@ def detect_labels(text):
 
 if __name__ == "__main__":
     print('Starting NLP processing flow...')
-    # text = open('example_transcription.txt').read()
-    text = open('text.txt').read()
+    text = open('example_transcription.txt').read()
     text = lemmize_text(text)
     labels = detect_labels(text)
     print(labels)
