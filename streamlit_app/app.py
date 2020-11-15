@@ -20,6 +20,21 @@ labels = [
     "Windows"
 ]
 
+words = {'building': {'strop': 1}, 'castle': {'zamek': 8}, 'cave': {'strop': 1}}
+
+
+@st.cache
+def load_data(file):
+    tfile = tempfile.NamedTemporaryFile(delete=False)
+    tfile.write(file.read())
+    vc = cv2.VideoCapture(tfile.name)
+    fps = int(vc.get(cv2.CAP_PROP_FPS))
+    # totalNoFrames = vc.get(cv2.CAP_PROP_FRAME_COUNT)
+    # duration_in_streamseconds = float(totalNoFrames) / float(fps)
+    res = {'frames': extract_frames(tfile.name, skip=fps)}
+    res['scores'] = [predict(frame) for frame in res['frames']]
+    return res, fps
+
 
 def frame_summary(frame, scores):
     st.image(frame, use_column_width=True)
@@ -38,11 +53,10 @@ def frame_summary(frame, scores):
             .encode(x=alt.X("label:O", sort=data["label"].tolist()),
                     y="score:Q")
     )
-    st.subheader("Frame result chart")
-    st.write(bars)
+    return bars
 
 
-def video_summary(predictions, duration):
+def video_summary(predictions):
     predictions = np.round(predictions)
 
     fig = plt.figure()
@@ -60,7 +74,11 @@ def video_summary(predictions, duration):
                     plt.plot([i - 1, i], [j, j], lw=5, c='#4C78A8')
                 else:
                     plt.scatter(i, j, s=7, c='#4C78A8', marker='s')
-    st.pyplot(fig)
+    return fig
+
+
+# def text_summary():
+#     pass
 
 
 def main():
@@ -69,24 +87,20 @@ def main():
     # uploaded file
     file = st.sidebar.file_uploader(label="Upload you MP4 file.",
                                     type=(["mp4"]))
-    try:
-        tfile = tempfile.NamedTemporaryFile(delete=False)
-        tfile.write(file.read())
-        vc = cv2.VideoCapture(tfile.name)
-        fps = int(vc.get(cv2.CAP_PROP_FPS))
-        totalNoFrames = vc.get(cv2.CAP_PROP_FRAME_COUNT)
-        duration_in_seconds = float(totalNoFrames) / float(fps)
-        res = {'frames': extract_frames(tfile.name, skip=fps)}
-        res['scores'] = [predict(frame) for frame in res['frames']]
+    if file is not None:
+        res, fps = load_data(file)
         st.header("Selected video")
         st.video(file)
         f_idx = st.sidebar.slider("Select frame", 0, len(res['frames']) - 1)
         st.header("Selected frame")
-        frame_summary(res['frames'][f_idx], res['scores'][f_idx])
+        bars = frame_summary(res['frames'][f_idx], res['scores'][f_idx])
+        st.subheader("Frame result chart")
+        st.write(bars)
         st.subheader("Chart of the time intervals in which particular classes "
                      "appears on the video")
-        video_summary(res['scores'], duration_in_seconds)
-    except AttributeError:
+        fig = video_summary(res['scores'])
+        st.pyplot(fig)
+    else:
         st.write("Please upload your video!")
 
 
