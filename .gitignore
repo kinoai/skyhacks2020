@@ -229,3 +229,6 @@ data/
 logs/
 lightning_logs/
 wandb/
+
+config.yaml
+skyhacks_hackathon_dataset
