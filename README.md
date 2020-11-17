@@ -1,3 +1,25 @@
+# Skyhacks2020
+
+## Streamlit
+
+### Build Streamlit docker image
+Run in project root:
+```
+    docker build -f Dockerfile_streamlit -t streamlit_skyhacks3:latest .
+```
+
+### Running and stopping Streamlit docker container from an image
+The command below will run a Streamlit app in the background (as a deamon):
+```
+    docker run -p 80:8501 -d streamlit_skyhacks3:latest
+```
+Now you can access the Streamlit app from the browser at the `<localhost or server IP>:8501`
+
+To stop the container run:
+```
+    docker stop `docker ps -qf "ancestor=streamlit_skyhacks3:latest"`
+```
+
 # Hackathon template
 A convenient starting template for most deep learning projects. Built with PyTorch Lightning and Weights&Biases (wandb).
 
